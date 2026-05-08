@@ -50,7 +50,7 @@ enum dilemma_keymap_layers {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [LAYER_BASE] = LAYOUT(
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
-      XXXXXXX,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,       KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
+      MS_BTN2,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,       KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_BSLS,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
@@ -157,10 +157,10 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #    endif // DILEMMA_AUTO_SNIPING_ON_LAYER
 
 // Invert scroll direction only (not cursor movement)
-report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    mouse_report.v = -mouse_report.v;
-    return mouse_report;
-}
+// report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+//     mouse_report.v = -mouse_report.v;
+//     return mouse_report;
+// }
 #endif // POINTING_DEVICE_ENABLEE
 
 #ifdef RGB_MATRIX_ENABLE
@@ -173,10 +173,10 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LGUI_T(KC_A):
         case RGUI_T(KC_SCLN):
-            return 180;
+            // return 180;
         case LSFT_T(KC_F):
         case RSFT_T(KC_J):
-            return 120;
+            // return 120;
         case LALT_T(KC_S):
         case LCTL_T(KC_D):
         case RCTL_T(KC_K):
