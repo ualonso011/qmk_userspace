@@ -157,11 +157,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #    endif // DILEMMA_AUTO_SNIPING_ON_LAYER
 
 // Invert scroll direction only (not cursor movement)
-// report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-//     mouse_report.v = -mouse_report.v;
-//     return mouse_report;
-// }
-#endif // POINTING_DEVICE_ENABLEE
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    mouse_report.v = -mouse_report.v;
+    return mouse_report;
+}
+#endif // POINTING_DEVICE_ENABLE
 
 #ifdef RGB_MATRIX_ENABLE
 // Forward-declare this helper function since it is defined in rgb_matrix.c.
@@ -171,17 +171,17 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     uint8_t layer = get_highest_layer(layer_state);
     if (layer == 0 || layer >= LAYER_LCD) return false;
 
-    uint8_t hue;
+    uint8_t hue, sat = 255, val = 255;
     switch (layer) {
-        case LAYER_MAGIC:       hue = 213; break;
-        case LAYER_PROGRAMMING: hue = 128; break;
-        case LAYER_NUMBERS:     hue = 64;  break;
-        case LAYER_NAV:         hue = 21;  break;
-        case LAYER_POINTER:     hue = 170; break;
-        default:               hue = 85;  break;
+        case LAYER_MAGIC:       hue = 85;  break;
+        case LAYER_PROGRAMMING: hue = 180; break;
+        case LAYER_NUMBERS:     hue = 21;  break;
+        case LAYER_NAV:         hue = 170; break;
+        case LAYER_POINTER:     hue = 0;   break;
+        default:               hue = 0; sat = 0; break;
     }
 
-    rgb_t rgb = hsv_to_rgb((hsv_t){hue, 255, 255});
+    rgb_t rgb = hsv_to_rgb((hsv_t){hue, sat, val});
 
     for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
         for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
