@@ -166,6 +166,36 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #ifdef RGB_MATRIX_ENABLE
 // Forward-declare this helper function since it is defined in rgb_matrix.c.
 void rgb_matrix_update_pwm_buffers(void);
+
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    uint8_t layer = get_highest_layer(layer_state);
+    if (layer == 0 || layer >= LAYER_LCD) return false;
+
+    uint8_t hue_assigned, hue_empty;
+
+    switch (layer) {
+        case LAYER_MAGIC:       hue_assigned = 213; hue_empty = 0;   break;
+        case LAYER_PROGRAMMING: hue_assigned = 128; hue_empty = 170; break;
+        case LAYER_NUMBERS:     hue_assigned = 64;  hue_empty = 43;  break;
+        case LAYER_NAV:         hue_assigned = 21;  hue_empty = 0;   break;
+        case LAYER_POINTER:     hue_assigned = 170; hue_empty = 128; break;
+        default:               hue_assigned = 85;  hue_empty = 128; break;
+    }
+
+    for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
+        for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
+            uint8_t led_index = g_led_config.matrix_co[row][col];
+            if (led_index >= led_min && led_index < led_max && led_index != NO_LED) {
+                uint16_t keycode = keymap_key_to_keycode(layer, (keypos_t){col, row});
+                rgb_matrix_set_color(led_index,
+                    hsv_to_rgb((hsv_t){keycode == KC_NO ? hue_empty : hue_assigned, 255, 255}).r,
+                    hsv_to_rgb((hsv_t){keycode == KC_NO ? hue_empty : hue_assigned, 255, 255}).g,
+                    hsv_to_rgb((hsv_t){keycode == KC_NO ? hue_empty : hue_assigned, 255, 255}).b);
+            }
+        }
+    }
+    return false;
+}
 #endif // RGB_MATRIX_ENABLE
 
 // Custom tapping terms for home row mods
