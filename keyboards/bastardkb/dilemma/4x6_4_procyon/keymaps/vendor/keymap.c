@@ -171,26 +171,26 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     uint8_t layer = get_highest_layer(layer_state);
     if (layer == 0 || layer >= LAYER_LCD) return false;
 
-    uint8_t hue_assigned, hue_empty;
-
+    uint8_t hue;
     switch (layer) {
-        case LAYER_MAGIC:       hue_assigned = 213; hue_empty = 0;   break;
-        case LAYER_PROGRAMMING: hue_assigned = 128; hue_empty = 170; break;
-        case LAYER_NUMBERS:     hue_assigned = 64;  hue_empty = 43;  break;
-        case LAYER_NAV:         hue_assigned = 21;  hue_empty = 0;   break;
-        case LAYER_POINTER:     hue_assigned = 170; hue_empty = 128; break;
-        default:               hue_assigned = 85;  hue_empty = 128; break;
+        case LAYER_MAGIC:       hue = 213; break;
+        case LAYER_PROGRAMMING: hue = 128; break;
+        case LAYER_NUMBERS:     hue = 64;  break;
+        case LAYER_NAV:         hue = 21;  break;
+        case LAYER_POINTER:     hue = 170; break;
+        default:               hue = 85;  break;
     }
+
+    rgb_t rgb = hsv_to_rgb((hsv_t){hue, 255, 255});
 
     for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
         for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
             uint8_t led_index = g_led_config.matrix_co[row][col];
             if (led_index >= led_min && led_index < led_max && led_index != NO_LED) {
                 uint16_t keycode = keymap_key_to_keycode(layer, (keypos_t){col, row});
-                rgb_matrix_set_color(led_index,
-                    hsv_to_rgb((hsv_t){keycode == KC_NO ? hue_empty : hue_assigned, 255, 255}).r,
-                    hsv_to_rgb((hsv_t){keycode == KC_NO ? hue_empty : hue_assigned, 255, 255}).g,
-                    hsv_to_rgb((hsv_t){keycode == KC_NO ? hue_empty : hue_assigned, 255, 255}).b);
+                if (keycode > KC_TRNS) {
+                    rgb_matrix_set_color(led_index, rgb.r, rgb.g, rgb.b);
+                }
             }
         }
     }
